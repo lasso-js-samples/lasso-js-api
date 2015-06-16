@@ -1,0 +1,17 @@
+{
+  "name": "lasso-js-api",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jquery": "^2.1.4",
+    "lasso": "^1.9.2",
+    "lasso-less": "^2.1.1",
+    "mustache": "^2.1.1"
+  }
+}
