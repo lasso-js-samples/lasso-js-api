@@ -1,13 +1,14 @@
 var lasso = require('lasso');
 var fs = require('fs');
+var path = require('path');
 var mustache = require('mustache');
 
 lasso.configure({
     'plugins': [
         'lasso-less'
     ],
-    'urlPrefix': 'static/',
-    'outputDir': 'static',
+    'urlPrefix': '/static',
+    'outputDir': path.join(__dirname, 'build/static'),
     'fingerprintsEnabled': true,
     'minify': false,
     'resolveCssUrls': true,
@@ -22,7 +23,7 @@ lasso.configure({
         {
             'name': 'math',
             'dependencies': [
-                'require: ./add'
+                'require: ./src/add'
             ]
         }
     ]
@@ -32,18 +33,31 @@ lasso.configure({
 lasso.lassoPage({
         name: 'my-page',
         dependencies: [
-            'style.less',
-            'require-run: ./main'
+            path.join(__dirname, 'src/browser.json')
         ]
     }, function(err, result) {
-        var mustacheSource = fs.readFileSync('my-page.mustache', 'utf8');
+        if (err) {
+            throw err;
+        }
+
+        var templatePath = path.join(__dirname, 'src/index.mustache');
+
+        var mustacheSource = fs.readFileSync(templatePath, {encoding: 'utf8'});
 
         var html = mustache.render(mustacheSource, {
             lassoHead: result.getHeadHtml(),
             lassoBody: result.getBodyHtml()
         });
 
-        fs.writeFileSync('my-page.html', html, 'utf8');
+        var buildDir = path.join(__dirname, 'build');
 
-        console.log('HTML page successfully written to "my-page.html"!');
+        try {
+            fs.mkdirSync(buildDir);
+        } catch(e) {}
+
+        var outputHtmlFile = path.join(buildDir, 'index.html');
+
+        fs.writeFileSync(outputHtmlFile, html, {encoding: 'utf8'});
+
+        console.log(`HTML page successfully written to "${outputHtmlFile}"!`);
     });
